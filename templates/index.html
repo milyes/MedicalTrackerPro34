@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>INTELLIGENCE - OCR IA</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
+  <style>
+    body {
+      background-color: #000d19;
+      color: #00ffff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    /* Define TailwindCSS extended colors */
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cyberblue: {
+              900: '#000d19',
+              800: '#00111e',
+              700: '#001a2e',
+              600: '#0f1f3a',
+              500: '#1a2a4a',
+              400: '#2a4db8',
+              300: '#3d6bdb',
+              200: '#00ffff',
+              100: '#ccffff',
+            }
+          }
+        }
+      }
+    }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen">
+  <!-- Header -->
+  <header class="bg-[#0a0a23] border-b border-[#1a2a4a] py-3 px-5 flex justify-between items-center">
+    <div class="flex items-center">
+      <h1 class="text-2xl font-bold text-cyan-400">INTELLIGENCE</h1>
+      <span class="text-[#3d6bdb] ml-2 text-sm">OCR System</span>
+    </div>
+    <div class="terminal-text text-sm text-[#3d6bdb]">
+      <i class="fas fa-circle text-green-500 text-xs mr-1"></i>
+      <span>Système en ligne</span>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-grow flex flex-col md:flex-row container mx-auto px-4 py-6 gap-6">
+    <!-- Left Side (Upload) -->
+    <section class="w-full md:w-1/2 space-y-6">
+      <div class="bg-[#0a0a23] rounded-2xl p-6 shadow-2xl border border-[#1a2a4a] scan-effect">
+        <h2 class="text-xl mb-6 text-center font-semibold terminal-text">
+          <i class="fas fa-file-pdf text-purple-400 mr-1"></i>
+          Analyse OCR PDF
+        </h2>
+        
+        <!-- Upload Form -->
+        <form id="upload-form" class="space-y-4">
+          <div class="w-full text-center border-2 border-dashed border-[#2a4db8] p-6 rounded-lg bg-[#0f1f3a] text-[#a3b1d1]">
+            <i class="fas fa-cloud-upload-alt text-2xl mb-2"></i>
+            <p>Glissez-déposez votre fichier ici</p>
+            <p class="text-sm">Limite 200MB par fichier • PDF uniquement</p>
+            <input type="file" id="pdf-upload" accept="application/pdf" class="hidden"/>
+            <label for="pdf-upload" class="mt-4 inline-block bg-[#2a4db8] px-4 py-2 rounded-md text-white font-semibold cursor-pointer hover:bg-[#1f3a7a] cyber-button">
+              Parcourir les fichiers
+            </label>
+          </div>
+          
+          <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded cyber-button">
+            <i class="fas fa-bolt mr-1"></i> Analyser
+          </button>
+        </form>
+        
+        <!-- Message Display -->
+        <div id="message-box" class="mt-4 p-3 rounded-md text-center hidden"></div>
+      </div>
+      
+      <!-- Information Panel -->
+      <div class="bg-[#0a0a23] rounded-2xl p-6 shadow-2xl border border-[#1a2a4a]">
+        <h3 class="text-lg font-semibold mb-3 terminal-text">
+          <i class="fas fa-info-circle text-blue-400 mr-1"></i>
+          Fonctionnalités du système
+        </h3>
+        <ul class="space-y-2 text-[#a3b1d1]">
+          <li class="flex items-start">
+            <i class="fas fa-check text-green-400 mt-1 mr-2"></i>
+            <span>Extraction OCR de texte à partir de fichiers PDF</span>
+          </li>
+          <li class="flex items-start">
+            <i class="fas fa-check text-green-400 mt-1 mr-2"></i>
+            <span>Interface terminal IA pour l'interaction avec les résultats</span>
+          </li>
+          <li class="flex items-start">
+            <i class="fas fa-check text-green-400 mt-1 mr-2"></i>
+            <span>Support du français et de l'anglais</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Right Side (Terminal) -->
+    <section class="w-full md:w-1/2 space-y-6">
+      <div class="bg-[#0a0a23] rounded-2xl p-6 shadow-2xl border border-[#0ff] glow">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-bold text-cyan-400 terminal-text">
+            <i class="fas fa-terminal mr-1"></i> TERMINAL IA
+          </h2>
+          <div class="flex items-center space-x-2">
+            <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+            <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+            <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+          </div>
+        </div>
+        
+        <!-- Terminal History -->
+        <div id="terminalHistory" class="terminal-text mb-4 h-40 bg-[#00111e] rounded-lg p-3 border border-[#1a2a4a] text-[#a3b1d1] overflow-y-auto">
+          <div>> IA SYSTEM v1.0 - Bienvenue</div>
+          <div>> Module OCR chargé</div>
+          <div>> Tapez 'help' pour afficher les commandes disponibles</div>
+        </div>
+        
+        <!-- Terminal Input -->
+        <div class="mb-4">
+          <div class="flex items-center terminal-text text-white bg-[#00111e] rounded-lg border border-cyan-400 p-0 overflow-hidden">
+            <span class="text-[#2a4db8] px-3">></span>
+            <input
+              id="questionInput"
+              type="text"
+              placeholder="Entrez une commande..."
+              class="w-full p-3 bg-transparent border-none focus:outline-none terminal-text terminal-cursor"
+            />
+          </div>
+        </div>
+
+        <button
+          onclick="sendMessage()"
+          class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded mb-6 cyber-button"
+        >
+          <i class="fas fa-paper-plane mr-1"></i> Envoyer
+        </button>
+
+        <!-- Response Box -->
+        <div class="mb-4">
+          <h3 class="text-cyan-400 mb-2 terminal-text">
+            <i class="fas fa-robot mr-1"></i> Réponse du système
+          </h3>
+          <div id="responseBox" class="terminal-text w-full p-3 bg-[#00111e] rounded-lg h-32 border border-cyan-400 text-white overflow-auto">
+            En attente de commande...
+          </div>
+        </div>
+      </div>
+      
+      <!-- Command Reference -->
+      <div class="bg-[#0a0a23] rounded-2xl p-6 shadow-2xl border border-[#1a2a4a]">
+        <h3 class="text-lg font-semibold mb-3 terminal-text">
+          <i class="fas fa-list-alt text-purple-400 mr-1"></i>
+          Commandes disponibles
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+          <div class="bg-[#00111e] p-2 rounded">
+            <code class="terminal-text text-purple-400">help</code>
+            <p class="text-[#a3b1d1]">Afficher l'aide</p>
+          </div>
+          <div class="bg-[#00111e] p-2 rounded">
+            <code class="terminal-text text-purple-400">status</code>
+            <p class="text-[#a3b1d1]">État du système</p>
+          </div>
+          <div class="bg-[#00111e] p-2 rounded">
+            <code class="terminal-text text-purple-400">show results</code>
+            <p class="text-[#a3b1d1]">Afficher les résultats</p>
+          </div>
+          <div class="bg-[#00111e] p-2 rounded">
+            <code class="terminal-text text-purple-400">clear</code>
+            <p class="text-[#a3b1d1]">Effacer les résultats</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-[#0a0a23] border-t border-[#1a2a4a] py-3 px-5 text-center text-[#a3b1d1] text-sm">
+    <p>INTELLIGENCE OCR IA • Made by milyes • 2024</p>
+  </footer>
+
+  <!-- JavaScript -->
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
