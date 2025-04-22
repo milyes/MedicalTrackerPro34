@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>TOCH OCR IA – Démo Complète</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap");
+  </style>
+</head>
+<body class="bg-[#000d19] font-sans text-white">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 min-h-screen py-10">
+    <!-- Header -->
+    <header class="text-center mb-10">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-white">TOCH OCR PDF – Démo Complète</h1>
+      <p class="text-[#a3b1d1] mt-2">Sélectionnez un fichier PDF à analyser avec l'IA</p>
+    </header>
+
+    <!-- Upload Form -->
+    <section class="bg-[#0f1f3a] border border-[#1a2a4a] rounded-lg p-6 mb-10">
+      <form id="upload-form" class="flex flex-col items-center gap-4" onsubmit="return false;">
+        <div class="w-full text-center border-2 border-dashed border-[#2a4db8] p-6 rounded-lg bg-[#1a2a4a] text-[#a3b1d1]">
+          <p>Drag and drop file here</p>
+          <p class="text-sm">Limit 200MB per file • PDF</p>
+          <input type="file" id="pdf-upload" accept="application/pdf" class="hidden"/>
+          <label for="pdf-upload" class="mt-4 inline-block bg-[#2a4db8] px-4 py-2 rounded-md text-white font-semibold cursor-pointer hover:bg-[#1f3a7a]">Browse files</label>
+        </div>
+        <button class="bg-[#2a4db8] text-white font-semibold rounded-md px-6 py-2 hover:bg-[#1f3a7a] transition" type="submit">Analyser</button>
+      </form>
+    </section>
+
+    <!-- Terminal IA Simulé -->
+    <section class="border border-[#1a2a4a] rounded-lg p-6">
+      <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><i class="fas fa-terminal"></i> Terminal IA</h2>
+      <pre class="animate-pulse font-mono text-[#2a4db8] text-2xl select-none">JANEWAY IA</pre>
+      <p class="font-mono text-sm text-white mt-2">Module OCR actif - Attente d’un fichier...</p>
+      <div id="output-terminal" class="mt-4 font-mono text-sm text-[#a3b1d1] bg-[#0f1f3a] p-4 rounded-md h-40 overflow-y-auto">
+        > En attente de commande...
+      </div>
+    </section>
+  </div>
+
+  <!-- Audio -->
+  <audio id="cmd-sound" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg" preload="auto"></audio>
+
+  <!-- JS -->
+  <script>
+    const form = document.getElementById("upload-form");
+    const output = document.getElementById("output-terminal");
+    const audio = document.getElementById("cmd-sound");
+
+    form.addEventListener("submit", () => {
+      audio.currentTime = 0;
+      audio.play();
+      output.innerHTML += "\n> Analyse en cours...\n> Résultat : Texte OCR extrait simulé...";
+      output.scrollTop = output.scrollHeight;
+    });
+  </script>
+</body>
+</html>

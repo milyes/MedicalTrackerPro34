@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>Centre de Contrôle IA</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap");
+  </style>
+</head>
+<body class="bg-[#000d19] font-sans text-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-screen flex flex-col">
+    <header class="flex justify-between items-center py-3 border-b border-[#0f1f3a]">
+      <h1 class="text-lg font-semibold">Centre de Contrôle IA</h1>
+      <div class="flex items-center space-x-2 text-sm font-normal">
+        <span>Bienvenue au</span>
+        <span class="font-bold">Centre de Contrôle IA</span>
+        <img alt="Icône robot vert stylisé" class="w-6 h-6" src="https://storage.googleapis.com/a1aa/image/51698752-159a-42a6-1c30-f507970938f8.jpg" width="24" height="24"/>
+      </div>
+    </header>
+    <nav class="flex justify-between items-center bg-[#0f1f3a] text-white text-sm font-semibold py-3 px-4 border-b border-[#0f1f3a]">
+      <ul class="flex space-x-8">
+        <li class="flex items-center space-x-2"><i class="fas fa-columns"></i><span>Tableau de bord</span></li>
+        <li class="flex items-center space-x-2"><i class="fas fa-list-alt"></i><span>Console</span></li>
+      </ul>
+      <div class="flex items-center space-x-2 text-[#a3b1d1]">
+        <i class="fas fa-th-list"></i><span>?</span>
+      </div>
+    </nav>
+    <main class="flex flex-col lg:flex-row gap-6 py-6 flex-grow">
+      <section class="flex flex-col gap-6 flex-1">
+        <article class="border border-[#1a2a4a] rounded-lg p-5 flex flex-col gap-4">
+          <h2 class="text-lg font-semibold flex items-center gap-2"><i class="fas fa-terminal"></i> Terminal IA</h2>
+          <pre class="animate-pulse font-mono text-[#2a4db8] text-xl leading-none select-none">JANEWAY IA</pre>
+          <p class="font-mono text-[#2a4db8] text-xs ml-1 select-none">Module avancé d’IA - Version 1.0</p>
+          <p class="font-mono text-sm">Connexion : 2024-04-20 16:30:42</p>
+          <p class="font-mono text-sm"><strong>admin@janeway:</strong> /home/admin/origine</p>
+          <p class="font-mono text-[#2a4db8] text-sm">Origine : mlpy <span class="font-bold">1.2</span></p>
+          <form id="terminal-form" class="flex gap-3 mt-2" onsubmit="return false;">
+            <input id="command-input" class="flex-grow rounded-md bg-[#0f1f3a] border border-[#1a2a4a] text-[#a3b1d1] font-mono px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#2a4db8]" placeholder="Entrez une commande..." type="text"/>
+            <button class="bg-[#2a4db8] text-white font-semibold rounded-md px-4 py-2 hover:bg-[#1f3a7a] transition" type="submit">Exécuter</button>
+          </form>
+        </article>
+        <article class="border border-[#1a2a4a] rounded-lg p-5 flex flex-col gap-4">
+          <h2 class="text-lg font-semibold">Exemples de commandes spéciales</h2>
+          <div class="border border-[#2a4db8] rounded-md p-3 text-sm">
+            <p><strong>Analyse des commandes</strong></p>
+            <p>analyse suivante</p>
+          </div>
+        </article>
+      </section>
+      <section class="flex flex-col gap-6 flex-1">
+        <article class="border border-[#1a2a4a] rounded-lg p-5 flex flex-col gap-4">
+          <h2 class="text-lg font-semibold">Exemples de commandes spéciales</h2>
+          <div class="border border-[#2a4db8] rounded-md p-3 text-sm">
+            <p>Analyse du réseau</p>
+            <p class="font-mono">scan network <span class="ml-2 bg-[#2a4db8] rounded-full px-3 py-1 text-xs font-semibold">scan network</span></p>
+            <p>Analyse tous les appareils connectés au réseau</p>
+          </div>
+          <div class="border border-[#2a4db8] rounded-md p-3 text-sm">
+            <p><strong>Prédiction d'accès</strong></p>
+            <p class="font-mono">predict access <span class="ml-2 bg-[#2a4db8] rounded-full px-3 py-1 text-xs font-semibold">predict access</span></p>
+            <p>Simule les probabilités de tentative d'accès</p>
+          </div>
+        </article>
+        <article class="bg-[#2a4db8] rounded-md p-5 text-white text-sm">
+          <h3 class="font-bold text-base">Nouveau ! Terminal Linux IA</h3>
+          <p>Découvrez notre nouvelle interface terminal stylisée</p>
+          <button class="bg-[#1f3a7a] rounded px-3 py-1 text-xs font-semibold mt-2">En savoir plus</button>
+        </article>
+      </section>
+    </main>
+  </div>
+  <audio id="cmd-sound" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg" preload="auto"></audio>
+  <script>
+    const form = document.getElementById("terminal-form");
+    const input = document.getElementById("command-input");
+    const audio = document.getElementById("cmd-sound");
+    form.addEventListener("submit", () => {
+      const cmd = input.value.trim();
+      if (cmd) {
+        audio.currentTime = 0;
+        audio.play();
+        alert("Commande exécutée : " + cmd);
+      }
+      input.value = "";
+    });
+  </script>
+</body>
+</html>

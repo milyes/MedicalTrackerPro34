@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>INTELLIGENCE - Live</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-color: #000d19;
+      color: #00ffff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+  </style>
+</head>
+<body class="flex items-center justify-center min-h-screen px-4">
+  <div class="w-full max-w-md bg-[#0a0a23] rounded-2xl p-6 shadow-2xl border border-[#0ff]">
+    <div class="flex justify-between items-center mb-4">
+      <h1 class="text-2xl font-bold text-cyan-400">INTELLIGENCE</h1>
+      <span class="text-white">milyes</span>
+    </div>
+
+    <h2 class="text-xl mb-6 text-center font-semibold">Welcome!</h2>
+
+    <div class="mb-4">
+      <input
+        id="questionInput"
+        type="text"
+        placeholder="Ask a question..."
+        class="w-full p-3 rounded-lg bg-[#00111e] text-white border border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+      />
+    </div>
+
+    <button
+      onclick="sendMessage()"
+      class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded mb-6"
+    >
+      Send
+    </button>
+
+    <div class="mb-4">
+      <h3 class="text-cyan-400 mb-2">Response</h3>
+      <div id="responseBox" class="w-full p-3 bg-[#00111e] rounded-lg h-24 border border-cyan-400 text-white overflow-auto"></div>
+    </div>
+
+    <script>
+      async function sendMessage() {
+        const input = document.getElementById("questionInput").value;
+        const responseBox = document.getElementById("responseBox");
+
+        const res = await fetch("http://localhost:5000/ask", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question: input }),
+        });
+
+        const data = await res.json();
+        responseBox.innerText = data.response;
+      }
+    </script>
+  </div>
+</body>
+</html>
