@@ -382,6 +382,330 @@ function exportAllPages() {
     showMessage('Export complet initié', 'success');
 }
 
+// Open CLI Modal
+function openCLIModal() {
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4';
+    
+    modal.innerHTML = `
+        <div class="bg-[#0a0a23] rounded-2xl border border-[#1a2a4a] w-full max-w-2xl">
+            <div class="p-4 border-b border-[#1a2a4a] flex justify-between items-center">
+                <h3 class="text-xl font-bold text-cyan-400">
+                    <i class="fas fa-terminal mr-2"></i>Interface CLI - NetSecurePro IA
+                </h3>
+                <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-white text-xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <div class="bg-[#00111e] rounded-lg p-4 mb-4 border border-[#1a2a4a]">
+                    <h4 class="text-cyan-400 mb-2 font-semibold">Utilisation CLI</h4>
+                    <pre class="terminal-text text-[#a3b1d1] text-sm">
+# Mode interactif
+python cli_ocr.py -i
+
+# Traitement direct
+python cli_ocr.py document.pdf -o resultat.txt
+
+# Export JSON
+python cli_ocr.py document.pdf -o data.json --json
+
+# Spécifier la langue
+python cli_ocr.py document.pdf -l fra+eng -o output.txt
+                    </pre>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="copyToClipboard('python cli_ocr.py -i')" 
+                            class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded text-sm">
+                        <i class="fas fa-copy mr-1"></i>Copier Mode Interactif
+                    </button>
+                    <a href="/static/cli_ocr.py" download class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded text-sm text-center">
+                        <i class="fas fa-download mr-1"></i>Télécharger CLI
+                    </a>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+}
+
+// Show API Info
+function showAPIInfo() {
+    fetch('/api/info')
+    .then(response => response.json())
+    .then(data => {
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4';
+        
+        modal.innerHTML = `
+            <div class="bg-[#0a0a23] rounded-2xl border border-[#1a2a4a] w-full max-w-2xl">
+                <div class="p-4 border-b border-[#1a2a4a] flex justify-between items-center">
+                    <h3 class="text-xl font-bold text-cyan-400">
+                        <i class="fas fa-code mr-2"></i>API Information
+                    </h3>
+                    <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-white text-xl">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="p-6">
+                    <div class="bg-[#00111e] rounded-lg p-4 mb-4 border border-[#1a2a4a]">
+                        <h4 class="text-cyan-400 mb-2 font-semibold">Endpoints Disponibles</h4>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex items-center">
+                                <span class="bg-green-600 text-white px-2 py-1 rounded text-xs mr-2">POST</span>
+                                <code class="text-[#a3b1d1]">/ask</code>
+                                <span class="text-gray-400 ml-2">- Commandes terminal</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="bg-green-600 text-white px-2 py-1 rounded text-xs mr-2">POST</span>
+                                <code class="text-[#a3b1d1]">/process-pdf</code>
+                                <span class="text-gray-400 ml-2">- Upload PDF</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="bg-blue-600 text-white px-2 py-1 rounded text-xs mr-2">GET</span>
+                                <code class="text-[#a3b1d1]">/export-text</code>
+                                <span class="text-gray-400 ml-2">- Export texte</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="bg-blue-600 text-white px-2 py-1 rounded text-xs mr-2">GET</span>
+                                <code class="text-[#a3b1d1]">/generate-qr</code>
+                                <span class="text-gray-400 ml-2">- QR Code APK</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="bg-blue-600 text-white px-2 py-1 rounded text-xs mr-2">GET</span>
+                                <code class="text-[#a3b1d1]">/api/info</code>
+                                <span class="text-gray-400 ml-2">- Info API</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="copyToClipboard('${window.location.origin}/api/info')" 
+                                class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded text-sm">
+                            <i class="fas fa-copy mr-1"></i>Copier URL API
+                        </button>
+                        <button onclick="window.open('/api/info', '_blank')" 
+                                class="bg-cyan-600 hover:bg-cyan-700 text-white px-3 py-2 rounded text-sm">
+                            <i class="fas fa-external-link-alt mr-1"></i>Voir API
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.remove();
+            }
+        });
+    })
+    .catch(error => {
+        showMessage('Erreur lors du chargement des informations API', 'error');
+    });
+}
+
+// Show Shortcuts
+function showShortcuts() {
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4';
+    
+    modal.innerHTML = `
+        <div class="bg-[#0a0a23] rounded-2xl border border-[#1a2a4a] w-full max-w-2xl">
+            <div class="p-4 border-b border-[#1a2a4a] flex justify-between items-center">
+                <h3 class="text-xl font-bold text-cyan-400">
+                    <i class="fas fa-keyboard mr-2"></i>Raccourcis Clavier
+                </h3>
+                <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-white text-xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 gap-4">
+                    <div class="bg-[#00111e] rounded-lg p-4 border border-[#1a2a4a]">
+                        <h4 class="text-cyan-400 mb-3 font-semibold">Navigation Générale</h4>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-[#a3b1d1]">Entrée</span>
+                                <span class="text-gray-400">Envoyer commande terminal</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-[#a3b1d1]">Échap</span>
+                                <span class="text-gray-400">Fermer modales</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-[#00111e] rounded-lg p-4 border border-[#1a2a4a]">
+                        <h4 class="text-cyan-400 mb-3 font-semibold">Visualiseur de Pages</h4>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-[#a3b1d1]">← →</span>
+                                <span class="text-gray-400">Navigation entre pages</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-[#a3b1d1]">Échap</span>
+                                <span class="text-gray-400">Fermer visualiseur</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-[#00111e] rounded-lg p-4 border border-[#1a2a4a]">
+                        <h4 class="text-cyan-400 mb-3 font-semibold">Actions Rapides</h4>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-[#a3b1d1]">Ctrl + U</span>
+                                <span class="text-gray-400">Upload fichier</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-[#a3b1d1]">Ctrl + E</span>
+                                <span class="text-gray-400">Export rapide</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+}
+
+// Show About
+function showAbout() {
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4';
+    
+    modal.innerHTML = `
+        <div class="bg-[#0a0a23] rounded-2xl border border-[#1a2a4a] w-full max-w-2xl">
+            <div class="p-4 border-b border-[#1a2a4a] flex justify-between items-center">
+                <h3 class="text-xl font-bold text-cyan-400">
+                    <i class="fas fa-heart mr-2"></i>À propos de NetSecurePro IA
+                </h3>
+                <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-white text-xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6 text-center">
+                <div class="mb-6">
+                    <div class="text-6xl mb-4">🤖</div>
+                    <h4 class="text-2xl font-bold text-cyan-400 mb-2">NetSecurePro IA</h4>
+                    <p class="text-[#a3b1d1] mb-4">OCR Intelligent v1.0</p>
+                </div>
+                <div class="bg-[#00111e] rounded-lg p-4 mb-4 border border-[#1a2a4a] text-left">
+                    <p class="text-[#a3b1d1] mb-2">
+                        <strong class="text-cyan-400">Auteur:</strong> Zoubirou Mohammed Ilyes
+                    </p>
+                    <p class="text-[#a3b1d1] mb-2">
+                        <strong class="text-cyan-400">ORCID:</strong> 
+                        <a href="https://orcid.org/0009-0007-7571-3178" target="_blank" class="text-purple-400 hover:underline">
+                            0009-0007-7571-3178
+                        </a>
+                    </p>
+                    <p class="text-[#a3b1d1] mb-2">
+                        <strong class="text-cyan-400">Version:</strong> 1.0
+                    </p>
+                    <p class="text-[#a3b1d1]">
+                        <strong class="text-cyan-400">Technologies:</strong> Flask, PyMuPDF, Tesseract OCR, TailwindCSS
+                    </p>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <a href="https://orcid.org/0009-0007-7571-3178" target="_blank" 
+                       class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded text-sm">
+                        <i class="fas fa-user mr-1"></i>Profil Auteur
+                    </a>
+                    <button onclick="generateQRCode()" 
+                            class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded text-sm">
+                        <i class="fas fa-mobile-alt mr-1"></i>APK Mobile
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+}
+
+// Export to JSON
+function exportToJSON() {
+    const pagesData = window.currentPagesData;
+    if (pagesData) {
+        const jsonData = {
+            app_name: "NetSecurePro IA - OCR Intelligent",
+            version: "1.0",
+            author: "Zoubirou Mohammed Ilyes",
+            export_date: new Date().toISOString(),
+            pages: pagesData
+        };
+        
+        const blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `netsecurepro_export_${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        
+        showMessage('Export JSON créé avec succès', 'success');
+    } else {
+        showMessage('Aucune donnée à exporter', 'error');
+    }
+}
+
+// Copy to clipboard
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(function() {
+        showMessage('Copié dans le presse-papiers', 'success');
+    }, function() {
+        showMessage('Erreur de copie', 'error');
+    });
+}
+
+// Mobile menu toggle
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    if (mobileMenuBtn && mobileMenu) {
+        mobileMenuBtn.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+        });
+    }
+    
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey) {
+            switch(e.key) {
+                case 'u':
+                    e.preventDefault();
+                    document.getElementById('pdf-upload').click();
+                    break;
+                case 'e':
+                    e.preventDefault();
+                    sendMessage('export');
+                    break;
+            }
+        }
+    });
+});
+
 // Generate QR Code for APK download
 function generateQRCode() {
     fetch('/generate-qr')

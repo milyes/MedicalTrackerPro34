@@ -43,11 +43,101 @@
       <h1 class="text-2xl font-bold text-cyan-400">NetSecurePro IA</h1>
       <span class="text-[#3d6bdb] ml-2 text-sm">OCR Intelligent</span>
     </div>
-    <div class="terminal-text text-sm text-[#3d6bdb]">
+    
+    <!-- Main Menu -->
+    <nav class="hidden md:flex items-center space-x-6">
+      <div class="relative group">
+        <button class="flex items-center text-[#a3b1d1] hover:text-cyan-400 transition-colors">
+          <i class="fas fa-cog mr-1"></i>
+          <span>Outils</span>
+          <i class="fas fa-chevron-down ml-1 text-xs"></i>
+        </button>
+        <div class="absolute right-0 mt-2 w-48 bg-[#0a0a23] border border-[#1a2a4a] rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+          <a href="#" onclick="openCLIModal()" class="block px-4 py-2 text-[#a3b1d1] hover:bg-[#1a2a4a] hover:text-cyan-400 transition-colors">
+            <i class="fas fa-terminal mr-2"></i>Interface CLI
+          </a>
+          <a href="#" onclick="generateQRCode()" class="block px-4 py-2 text-[#a3b1d1] hover:bg-[#1a2a4a] hover:text-cyan-400 transition-colors">
+            <i class="fas fa-qrcode mr-2"></i>QR Code APK
+          </a>
+          <a href="#" onclick="showAPIInfo()" class="block px-4 py-2 text-[#a3b1d1] hover:bg-[#1a2a4a] hover:text-cyan-400 transition-colors">
+            <i class="fas fa-code mr-2"></i>API Info
+          </a>
+          <a href="#" onclick="showShortcuts()" class="block px-4 py-2 text-[#a3b1d1] hover:bg-[#1a2a4a] hover:text-cyan-400 transition-colors">
+            <i class="fas fa-keyboard mr-2"></i>Raccourcis
+          </a>
+        </div>
+      </div>
+      
+      <div class="relative group">
+        <button class="flex items-center text-[#a3b1d1] hover:text-cyan-400 transition-colors">
+          <i class="fas fa-download mr-1"></i>
+          <span>Export</span>
+          <i class="fas fa-chevron-down ml-1 text-xs"></i>
+        </button>
+        <div class="absolute right-0 mt-2 w-48 bg-[#0a0a23] border border-[#1a2a4a] rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+          <a href="#" onclick="sendMessage('export')" class="block px-4 py-2 text-[#a3b1d1] hover:bg-[#1a2a4a] hover:text-cyan-400 transition-colors">
+            <i class="fas fa-file-text mr-2"></i>Export Texte
+          </a>
+          <a href="#" onclick="window.open('/export-text', '_blank')" class="block px-4 py-2 text-[#a3b1d1] hover:bg-[#1a2a4a] hover:text-cyan-400 transition-colors">
+            <i class="fas fa-download mr-2"></i>Télécharger
+          </a>
+          <a href="#" onclick="exportToJSON()" class="block px-4 py-2 text-[#a3b1d1] hover:bg-[#1a2a4a] hover:text-cyan-400 transition-colors">
+            <i class="fas fa-code mr-2"></i>Export JSON
+          </a>
+        </div>
+      </div>
+      
+      <div class="relative group">
+        <button class="flex items-center text-[#a3b1d1] hover:text-cyan-400 transition-colors">
+          <i class="fas fa-info-circle mr-1"></i>
+          <span>Aide</span>
+          <i class="fas fa-chevron-down ml-1 text-xs"></i>
+        </button>
+        <div class="absolute right-0 mt-2 w-48 bg-[#0a0a23] border border-[#1a2a4a] rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+          <a href="#" onclick="sendMessage('help')" class="block px-4 py-2 text-[#a3b1d1] hover:bg-[#1a2a4a] hover:text-cyan-400 transition-colors">
+            <i class="fas fa-question-circle mr-2"></i>Commandes
+          </a>
+          <a href="#" onclick="sendMessage('version')" class="block px-4 py-2 text-[#a3b1d1] hover:bg-[#1a2a4a] hover:text-cyan-400 transition-colors">
+            <i class="fas fa-info mr-2"></i>Version
+          </a>
+          <a href="https://orcid.org/0009-0007-7571-3178" target="_blank" class="block px-4 py-2 text-[#a3b1d1] hover:bg-[#1a2a4a] hover:text-cyan-400 transition-colors">
+            <i class="fas fa-user mr-2"></i>Auteur
+          </a>
+          <a href="#" onclick="showAbout()" class="block px-4 py-2 text-[#a3b1d1] hover:bg-[#1a2a4a] hover:text-cyan-400 transition-colors">
+            <i class="fas fa-heart mr-2"></i>À propos
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Mobile Menu Button -->
+    <button id="mobile-menu-btn" class="md:hidden text-[#a3b1d1] hover:text-cyan-400">
+      <i class="fas fa-bars text-xl"></i>
+    </button>
+    
+    <div class="hidden md:block terminal-text text-sm text-[#3d6bdb]">
       <i class="fas fa-circle text-green-500 text-xs mr-1"></i>
       <span>Système en ligne</span>
     </div>
   </header>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="hidden md:hidden bg-[#0a0a23] border-b border-[#1a2a4a] px-5 py-3">
+    <div class="space-y-2">
+      <button onclick="openCLIModal()" class="w-full text-left px-3 py-2 text-[#a3b1d1] hover:bg-[#1a2a4a] rounded">
+        <i class="fas fa-terminal mr-2"></i>Interface CLI
+      </button>
+      <button onclick="generateQRCode()" class="w-full text-left px-3 py-2 text-[#a3b1d1] hover:bg-[#1a2a4a] rounded">
+        <i class="fas fa-qrcode mr-2"></i>QR Code APK
+      </button>
+      <button onclick="sendMessage('export')" class="w-full text-left px-3 py-2 text-[#a3b1d1] hover:bg-[#1a2a4a] rounded">
+        <i class="fas fa-download mr-2"></i>Export
+      </button>
+      <button onclick="sendMessage('help')" class="w-full text-left px-3 py-2 text-[#a3b1d1] hover:bg-[#1a2a4a] rounded">
+        <i class="fas fa-question-circle mr-2"></i>Aide
+      </button>
+    </div>
+  </div>
 
   <!-- Main Content -->
   <main class="flex-grow flex flex-col md:flex-row container mx-auto px-4 py-6 gap-6">
