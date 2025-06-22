@@ -6,10 +6,10 @@ let completeSound = new Audio('https://actions.google.com/sounds/v1/cartoon/slid
 let errorSound = new Audio('https://actions.google.com/sounds/v1/cartoon/negative_tone.ogg');
 
 // Terminal functionality
-function sendMessage() {
+function sendMessage(predefinedCommand = null) {
     const input = document.getElementById("questionInput");
     const responseBox = document.getElementById("responseBox");
-    const question = input.value.trim();
+    const question = predefinedCommand || input.value.trim();
     
     if (!question) return;
     
@@ -20,8 +20,10 @@ function sendMessage() {
     // Add command to terminal history
     addToTerminal(`> ${question}`);
     
-    // Clear input
-    input.value = "";
+    // Clear input (only if not predefined command)
+    if (!predefinedCommand) {
+        input.value = "";
+    }
     
     // Show loading indicator
     responseBox.innerHTML = `<div class="text-cyan-400">Traitement en cours<span class="animate-pulse">...</span></div>`;
@@ -50,6 +52,10 @@ function sendMessage() {
         
         if (data.qr_action) {
             generateQRCode();
+        }
+        
+        if (data.show_pages && data.pages_data) {
+            showDynamicPageViewer(data.pages_data);
         }
     })
     .catch(err => {
@@ -194,6 +200,187 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// Show Dynamic Page Viewer
+function showDynamicPageViewer(pagesData) {
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4';
+    
+    let currentPage = 0;
+    
+    const updatePageContent = () => {
+        const page = pagesData[currentPage];
+        const pageContent = document.getElementById('dynamic-page-content');
+        const pageInfo = document.getElementById('dynamic-page-info');
+        const prevBtn = document.getElementById('prev-page-btn');
+        const nextBtn = document.getElementById('next-page-btn');
+        
+        if (pageContent && pageInfo && page) {
+            pageContent.textContent = page.content || 'Aucun texte détecté sur cette page';
+            pageInfo.innerHTML = `
+                <div class="flex justify-between items-center text-sm">
+                    <span>Page ${page.page_number} / ${pagesData.length}</span>
+                    <span>${page.char_count} caractères</span>
+                </div>
+            `;
+            
+            prevBtn.disabled = currentPage === 0;
+            nextBtn.disabled = currentPage === pagesData.length - 1;
+            
+            prevBtn.className = currentPage === 0 ? 
+                'bg-gray-600 text-gray-400 px-3 py-1 rounded cursor-not-allowed' :
+                'bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded cyber-button';
+                
+            nextBtn.className = currentPage === pagesData.length - 1 ? 
+                'bg-gray-600 text-gray-400 px-3 py-1 rounded cursor-not-allowed' :
+                'bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded cyber-button';
+        }
+    };
+    
+    modal.innerHTML = `
+        <div class="bg-[#0a0a23] rounded-2xl border border-[#1a2a4a] w-full max-w-4xl max-h-[90vh] flex flex-col">
+            <!-- Header -->
+            <div class="p-4 border-b border-[#1a2a4a] flex justify-between items-center">
+                <h3 class="text-xl font-bold text-cyan-400">
+                    <i class="fas fa-file-alt mr-2"></i>Visualisation Dynamique - Résultats OCR
+                </h3>
+                <button onclick="this.closest('.fixed').remove()" 
+                        class="text-gray-400 hover:text-white text-xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <!-- Page Navigation -->
+            <div class="p-4 border-b border-[#1a2a4a] bg-[#00111e]">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center space-x-2">
+                        <button id="prev-page-btn" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded cyber-button">
+                            <i class="fas fa-chevron-left mr-1"></i>Précédent
+                        </button>
+                        <button id="next-page-btn" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded cyber-button">
+                            Suivant<i class="fas fa-chevron-right ml-1"></i>
+                        </button>
+                    </div>
+                    <div id="dynamic-page-info" class="text-[#a3b1d1]">
+                        <!-- Page info will be inserted here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Page Content -->
+            <div class="flex-1 p-4 overflow-hidden">
+                <div class="h-full bg-[#00111e] rounded-lg border border-[#1a2a4a] p-4 overflow-y-auto">
+                    <pre id="dynamic-page-content" class="terminal-text text-[#a3b1d1] whitespace-pre-wrap text-sm leading-relaxed">
+                        <!-- Page content will be inserted here -->
+                    </pre>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div class="p-4 border-t border-[#1a2a4a] bg-[#00111e] flex justify-between items-center">
+                <div class="flex space-x-2">
+                    <button onclick="exportCurrentPage()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm">
+                        <i class="fas fa-download mr-1"></i>Exporter Page
+                    </button>
+                    <button onclick="exportAllPages()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">
+                        <i class="fas fa-file-export mr-1"></i>Exporter Tout
+                    </button>
+                </div>
+                <div class="text-[#a3b1d1] text-xs">
+                    Utilisez ← → pour naviguer entre les pages
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Set up event listeners
+    const prevBtn = document.getElementById('prev-page-btn');
+    const nextBtn = document.getElementById('next-page-btn');
+    
+    prevBtn.addEventListener('click', () => {
+        if (currentPage > 0) {
+            currentPage--;
+            updatePageContent();
+        }
+    });
+    
+    nextBtn.addEventListener('click', () => {
+        if (currentPage < pagesData.length - 1) {
+            currentPage++;
+            updatePageContent();
+        }
+    });
+    
+    // Keyboard navigation
+    const handleKeyDown = (e) => {
+        if (e.key === 'ArrowLeft' && currentPage > 0) {
+            currentPage--;
+            updatePageContent();
+        } else if (e.key === 'ArrowRight' && currentPage < pagesData.length - 1) {
+            currentPage++;
+            updatePageContent();
+        } else if (e.key === 'Escape') {
+            modal.remove();
+            document.removeEventListener('keydown', handleKeyDown);
+        }
+    };
+    
+    document.addEventListener('keydown', handleKeyDown);
+    
+    // Click outside to close
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.remove();
+            document.removeEventListener('keydown', handleKeyDown);
+        }
+    });
+    
+    // Initialize first page
+    updatePageContent();
+    
+    // Store pages data globally for export functions
+    window.currentPagesData = pagesData;
+    window.currentPageIndex = () => currentPage;
+}
+
+// Export current page
+function exportCurrentPage() {
+    const pagesData = window.currentPagesData;
+    const currentPage = window.currentPageIndex();
+    
+    if (pagesData && pagesData[currentPage]) {
+        const page = pagesData[currentPage];
+        const content = `NetSecurePro IA - Export Page ${page.page_number}
+Date d'export: ${new Date().toLocaleString()}
+Auteur: Zoubirou Mohammed Ilyes
+=====================================
+
+${page.content}
+
+=====================================
+Page ${page.page_number} - ${page.char_count} caractères
+Généré par NetSecurePro IA OCR System
+`;
+        
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `netsecurepro_page_${page.page_number}_${new Date().toISOString().slice(0,10)}.txt`;
+        a.click();
+        URL.revokeObjectURL(url);
+        
+        showMessage(`Page ${page.page_number} exportée avec succès`, 'success');
+    }
+}
+
+// Export all pages
+function exportAllPages() {
+    window.open('/export-text', '_blank');
+    showMessage('Export complet initié', 'success');
+}
 
 // Generate QR Code for APK download
 function generateQRCode() {
