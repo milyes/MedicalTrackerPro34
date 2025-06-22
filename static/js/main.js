@@ -134,6 +134,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Add to terminal output
                     addToTerminal(`> Document analysé: ${file.name}`);
                     addToTerminal(`> Extraction OCR terminée`);
+                    
+                    // Update statistics
+                    updateStats(data);
                     document.getElementById('responseBox').innerHTML = 
                         `<div class="text-green-400">Analyse terminée!</div>
                          <div class="mt-2">Prévisualisation: ${data.preview}</div>
@@ -701,10 +704,82 @@ document.addEventListener('DOMContentLoaded', function() {
                     e.preventDefault();
                     sendMessage('export');
                     break;
+                case 'r':
+                    e.preventDefault();
+                    sendMessage('show results');
+                    break;
+                case 'h':
+                    e.preventDefault();
+                    sendMessage('help');
+                    break;
             }
         }
+        // Function keys
+        if (e.key === 'F1') {
+            e.preventDefault();
+            showShortcuts();
+        }
+        if (e.key === 'F2') {
+            e.preventDefault();
+            showAPIInfo();
+        }
     });
+    
+    // Detect screen size and update interface
+    detectScreenSize();
+    window.addEventListener('resize', detectScreenSize);
 });
+
+// Detect screen size for desktop optimization
+function detectScreenSize() {
+    const isDesktop = window.innerWidth >= 1280;
+    const terminalHistory = document.getElementById('terminalHistory');
+    
+    if (isDesktop && terminalHistory) {
+        addToTerminal('> Interface optimisée pour affichage desktop');
+    }
+}
+
+// Update statistics
+function updateStats(data) {
+    // Increment document counter
+    const docsCount = document.getElementById('docs-count');
+    if (docsCount) {
+        const current = parseInt(docsCount.textContent) || 0;
+        docsCount.textContent = current + 1;
+    }
+    
+    // Update pages count if available
+    if (data.pages_data) {
+        const pagesCount = document.getElementById('pages-count');
+        if (pagesCount) {
+            const current = parseInt(pagesCount.textContent) || 0;
+            pagesCount.textContent = current + data.pages_data.length;
+        }
+        
+        // Update characters count
+        const charsCount = document.getElementById('chars-count');
+        if (charsCount) {
+            const totalChars = data.pages_data.reduce((sum, page) => sum + (page.char_count || 0), 0);
+            const current = parseInt(charsCount.textContent) || 0;
+            charsCount.textContent = current + totalChars;
+        }
+    }
+}
+
+// Reset statistics
+function resetStats() {
+    const docsCount = document.getElementById('docs-count');
+    const pagesCount = document.getElementById('pages-count');
+    const charsCount = document.getElementById('chars-count');
+    
+    if (docsCount) docsCount.textContent = '0';
+    if (pagesCount) pagesCount.textContent = '0';
+    if (charsCount) charsCount.textContent = '0';
+    
+    addToTerminal('> Statistiques réinitialisées');
+    showMessage('Statistiques remises à zéro', 'success');
+}
 
 // Generate QR Code for APK download
 function generateQRCode() {
