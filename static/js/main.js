@@ -36,6 +36,21 @@ function sendMessage() {
     .then(data => {
         // Format and display response
         responseBox.innerHTML = formatTerminalResponse(data.response);
+        
+        // Handle special actions
+        if (data.export_ready) {
+            addToTerminal(`> Export prêt: ${data.filename}`);
+            // Auto-download the export
+            window.open('/export-text', '_blank');
+        }
+        
+        if (data.download_action) {
+            window.open('/export-text', '_blank');
+        }
+        
+        if (data.qr_action) {
+            generateQRCode();
+        }
     })
     .catch(err => {
         responseBox.innerHTML = `<div class="text-red-500">Erreur: ${err.message}</div>`;
@@ -179,6 +194,53 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// Generate QR Code for APK download
+function generateQRCode() {
+    fetch('/generate-qr')
+    .then(response => response.json())
+    .then(data => {
+        if (data.qr_code) {
+            // Create QR code modal
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-[#0a0a23] p-6 rounded-2xl border border-[#1a2a4a] max-w-md">
+                    <h3 class="text-xl font-bold text-cyan-400 mb-4 text-center">
+                        <i class="fas fa-mobile-alt mr-2"></i>Télécharger APK NetSecurePro
+                    </h3>
+                    <div class="text-center mb-4">
+                        <img src="${data.qr_code}" alt="QR Code" class="mx-auto mb-2 border border-cyan-400 rounded">
+                        <p class="text-[#a3b1d1] text-sm">Scannez ce QR code avec votre téléphone</p>
+                    </div>
+                    <div class="text-center">
+                        <a href="${data.apk_url}" target="_blank" 
+                           class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded cyber-button inline-block mr-2">
+                            <i class="fas fa-download mr-1"></i>Télécharger APK
+                        </a>
+                        <button onclick="this.parentElement.parentElement.parentElement.remove()" 
+                                class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                            Fermer
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            // Add click outside to close
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+        } else {
+            showMessage('Erreur lors de la génération du QR Code', 'error');
+        }
+    })
+    .catch(error => {
+        showMessage(`Erreur QR Code: ${error.message}`, 'error');
+    });
+}
 
 // Show message in UI
 function showMessage(message, type) {

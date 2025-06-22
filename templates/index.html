@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>INTELLIGENCE - OCR IA</title>
+  <title>NetSecurePro IA - OCR Intelligent</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
   <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
@@ -40,8 +40,8 @@
   <!-- Header -->
   <header class="bg-[#0a0a23] border-b border-[#1a2a4a] py-3 px-5 flex justify-between items-center">
     <div class="flex items-center">
-      <h1 class="text-2xl font-bold text-cyan-400">INTELLIGENCE</h1>
-      <span class="text-[#3d6bdb] ml-2 text-sm">OCR System</span>
+      <h1 class="text-2xl font-bold text-cyan-400">NetSecurePro IA</h1>
+      <span class="text-[#3d6bdb] ml-2 text-sm">OCR Intelligent</span>
     </div>
     <div class="terminal-text text-sm text-[#3d6bdb]">
       <i class="fas fa-circle text-green-500 text-xs mr-1"></i>
@@ -84,22 +84,32 @@
       <div class="bg-[#0a0a23] rounded-2xl p-6 shadow-2xl border border-[#1a2a4a]">
         <h3 class="text-lg font-semibold mb-3 terminal-text">
           <i class="fas fa-info-circle text-blue-400 mr-1"></i>
-          Fonctionnalités du système
+          NetSecurePro IA - Fonctionnalités
         </h3>
         <ul class="space-y-2 text-[#a3b1d1]">
           <li class="flex items-start">
             <i class="fas fa-check text-green-400 mt-1 mr-2"></i>
-            <span>Extraction OCR de texte à partir de fichiers PDF</span>
+            <span>OCR PDF précis (PyMuPDF + Tesseract)</span>
           </li>
           <li class="flex items-start">
             <i class="fas fa-check text-green-400 mt-1 mr-2"></i>
-            <span>Interface terminal IA pour l'interaction avec les résultats</span>
+            <span>Export texte avec métadonnées</span>
           </li>
           <li class="flex items-start">
             <i class="fas fa-check text-green-400 mt-1 mr-2"></i>
-            <span>Support du français et de l'anglais</span>
+            <span>Application mobile Flutter APK</span>
+          </li>
+          <li class="flex items-start">
+            <i class="fas fa-check text-green-400 mt-1 mr-2"></i>
+            <span>QR Code de téléchargement intégré</span>
           </li>
         </ul>
+        <div class="mt-4 p-3 bg-[#00111e] rounded border border-[#2a4db8]">
+          <p class="text-xs text-[#a3b1d1]">
+            <strong>Auteur:</strong> Zoubirou Mohammed Ilyes<br>
+            <strong>ORCID:</strong> <a href="https://orcid.org/0009-0007-7571-3178" target="_blank" class="text-cyan-400 hover:underline">0009-0007-7571-3178</a>
+          </p>
+        </div>
       </div>
     </section>
 
@@ -119,8 +129,9 @@
         
         <!-- Terminal History -->
         <div id="terminalHistory" class="terminal-text mb-4 h-40 bg-[#00111e] rounded-lg p-3 border border-[#1a2a4a] text-[#a3b1d1] overflow-y-auto">
-          <div>> IA SYSTEM v1.0 - Bienvenue</div>
-          <div>> Module OCR chargé</div>
+          <div>> NetSecurePro IA v1.0 - Système initialisé</div>
+          <div>> Module OCR PyMuPDF + Tesseract chargé</div>
+          <div>> Auteur: Zoubirou Mohammed Ilyes</div>
           <div>> Tapez 'help' pour afficher les commandes disponibles</div>
         </div>
         
@@ -178,6 +189,22 @@
             <code class="terminal-text text-purple-400">clear</code>
             <p class="text-[#a3b1d1]">Effacer les résultats</p>
           </div>
+          <div class="bg-[#00111e] p-2 rounded">
+            <code class="terminal-text text-purple-400">export</code>
+            <p class="text-[#a3b1d1]">Exporter vers fichier</p>
+          </div>
+          <div class="bg-[#00111e] p-2 rounded">
+            <code class="terminal-text text-purple-400">qr</code>
+            <p class="text-[#a3b1d1]">QR Code APK</p>
+          </div>
+          <div class="bg-[#00111e] p-2 rounded">
+            <code class="terminal-text text-purple-400">version</code>
+            <p class="text-[#a3b1d1]">Infos système</p>
+          </div>
+          <div class="bg-[#00111e] p-2 rounded">
+            <code class="terminal-text text-purple-400">download</code>
+            <p class="text-[#a3b1d1]">Télécharger export</p>
+          </div>
         </div>
       </div>
     </section>
@@ -185,7 +212,12 @@
 
   <!-- Footer -->
   <footer class="bg-[#0a0a23] border-t border-[#1a2a4a] py-3 px-5 text-center text-[#a3b1d1] text-sm">
-    <p>INTELLIGENCE OCR IA • Made by milyes • 2024</p>
+    <p>NetSecurePro IA - OCR Intelligent • Zoubirou Mohammed Ilyes • 2024</p>
+    <div class="mt-1">
+      <button onclick="generateQRCode()" class="bg-purple-600 hover:bg-purple-700 text-white text-xs px-3 py-1 rounded cyber-button">
+        <i class="fas fa-mobile-alt mr-1"></i>Télécharger APK
+      </button>
+    </div>
   </footer>
 
   <!-- JavaScript -->
