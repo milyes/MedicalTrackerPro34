@@ -19,15 +19,22 @@ app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key")
 
 # Configure OCR session storage
 class OCRSessionManager:
-    def store_result(self, ocr_text):
+    def store_result(self, ocr_text, pages_data=None):
         session['ocr_results'] = ocr_text
+        if pages_data:
+            session['pages_data'] = pages_data
         
     def get_results(self):
         return session.get('ocr_results', '')
     
+    def get_pages_data(self):
+        return session.get('pages_data', [])
+    
     def clear_results(self):
         if 'ocr_results' in session:
             del session['ocr_results']
+        if 'pages_data' in session:
+            del session['pages_data']
 
 # Initialize OCR session manager
 ocr_manager = OCRSessionManager()
@@ -68,9 +75,17 @@ def ask_question():
             })
         elif 'show results' in question or 'afficher' in question:
             if ocr_results:
-                return jsonify({
-                    'response': f"Résultats OCR:\n{ocr_results[:500]}...\n(Résultats tronqués pour l'affichage)"
-                })
+                pages_data = ocr_manager.get_pages_data()
+                if pages_data:
+                    return jsonify({
+                        'response': f"Document analysé - {len(pages_data)} pages trouvées. Navigation dynamique activée.",
+                        'show_pages': True,
+                        'pages_data': pages_data
+                    })
+                else:
+                    return jsonify({
+                        'response': f"Résultats OCR:\n{ocr_results[:500]}...\n(Résultats tronqués pour l'affichage)"
+                    })
             else:
                 return jsonify({
                     'response': "Aucun résultat disponible. Analysez d'abord un document."
@@ -139,10 +154,10 @@ def process_pdf():
             
         # Process the PDF with PyMuPDF
         pdf_bytes = pdf_file.read()
-        ocr_output = process_pdf_with_ocr(pdf_bytes)
+        ocr_output, pages_data = process_pdf_with_ocr(pdf_bytes)
         
         # Store results in session
-        ocr_manager.store_result(ocr_output)
+        ocr_manager.store_result(ocr_output, pages_data)
         
         # Return success with a preview
         return jsonify({
@@ -161,6 +176,7 @@ def process_pdf():
 def process_pdf_with_ocr(pdf_bytes):
     """Process a PDF file with OCR"""
     ocr_output = ""
+    pages_data = []
     
     try:
         with fitz.open(stream=pdf_bytes, filetype="pdf") as doc:
@@ -178,13 +194,23 @@ def process_pdf_with_ocr(pdf_bytes):
                 text = pytesseract.image_to_string(img, lang='fra+eng')
                 
                 # Add to output
-                ocr_output += f"--- Page {i+1}/{total_pages} ---\n{text}\n\n"
+                page_content = f"--- Page {i+1}/{total_pages} ---\n{text}\n\n"
+                ocr_output += page_content
+                
+                # Store page data for dynamic display
+                pages_data.append({
+                    'page_number': i + 1,
+                    'content': text.strip(),
+                    'char_count': len(text.strip()),
+                    'has_content': len(text.strip()) > 0,
+                    'preview': text.strip()[:100] + "..." if len(text.strip()) > 100 else text.strip()
+                })
                 
     except Exception as e:
         logging.error(f"OCR processing error: {str(e)}")
         raise
         
-    return ocr_output
+    return ocr_output, pages_data
 
 @app.route('/export-text')
 def export_text():
