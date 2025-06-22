@@ -4,7 +4,11 @@ import logging
 import pytesseract
 import fitz  # PyMuPDF
 from PIL import Image
-from flask import Flask, render_template, request, jsonify, flash, session
+from flask import Flask, render_template, request, jsonify, flash, session, send_file, Response
+import json
+from datetime import datetime
+import tempfile
+import base64
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -46,7 +50,7 @@ def ask_question():
         # Basic terminal commands simulation
         if 'help' in question:
             return jsonify({
-                'response': "Commandes disponibles:\n- analyze: Analyser le document\n- clear: Effacer les résultats\n- status: État du système"
+                'response': "NetSecurePro IA - Commandes disponibles:\n- analyze: Analyser le document\n- clear: Effacer les résultats\n- status: État du système\n- show results: Afficher les résultats\n- export: Exporter vers fichier texte\n- download: Télécharger le dernier export\n- qr: Générer QR Code APK\n- version: Informations du système"
             })
         elif 'status' in question:
             if ocr_results:
@@ -71,6 +75,34 @@ def ask_question():
                 return jsonify({
                     'response': "Aucun résultat disponible. Analysez d'abord un document."
                 })
+        elif 'export' in question:
+            if ocr_results:
+                # Export functionality
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                filename = f"ocr_export_{timestamp}.txt"
+                return jsonify({
+                    'response': f"Export créé: {filename}. Utilisez 'download {filename}' pour télécharger.",
+                    'export_ready': True,
+                    'filename': filename
+                })
+            else:
+                return jsonify({
+                    'response': "Aucun résultat à exporter. Analysez d'abord un document."
+                })
+        elif 'download' in question:
+            return jsonify({
+                'response': "Téléchargement initié... Vérifiez votre dossier de téléchargements.",
+                'download_action': True
+            })
+        elif 'qr' in question or 'apk' in question:
+            return jsonify({
+                'response': "Génération du QR Code pour télécharger l'APK NetSecurePro...",
+                'qr_action': True
+            })
+        elif 'version' in question or 'info' in question:
+            return jsonify({
+                'response': "NetSecurePro IA - OCR Intelligent v1.0\nAuteur: Zoubirou Mohammed Ilyes\nMoteur: PyMuPDF + Tesseract OCR"
+            })
         else:
             return jsonify({
                 'response': f"Commande '{question}' non reconnue. Tapez 'help' pour voir les commandes disponibles."
@@ -153,6 +185,96 @@ def process_pdf_with_ocr(pdf_bytes):
         raise
         
     return ocr_output
+
+@app.route('/export-text')
+def export_text():
+    """Export OCR results as downloadable text file"""
+    try:
+        ocr_results = ocr_manager.get_results()
+        if not ocr_results:
+            return jsonify({'error': 'Aucun résultat à exporter'}), 400
+            
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"netsecurepro_ocr_export_{timestamp}.txt"
+        
+        # Create file content with metadata
+        content = f"""NetSecurePro IA - Export OCR
+Date d'export: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+Auteur: Zoubirou Mohammed Ilyes
+Version: 1.0
+=====================================
+
+{ocr_results}
+
+=====================================
+Généré par NetSecurePro IA OCR System
+"""
+        
+        return Response(
+            content,
+            mimetype='text/plain',
+            headers={"Content-disposition": f"attachment; filename={filename}"}
+        )
+        
+    except Exception as e:
+        logging.error(f"Export error: {str(e)}")
+        return jsonify({'error': f'Erreur lors de l\'export: {str(e)}'}), 500
+
+@app.route('/generate-qr')
+def generate_qr():
+    """Generate QR code for APK download"""
+    try:
+        import qrcode
+        
+        # APK download URL
+        apk_url = "https://netsecurepro.github.io/NetSecureOCR.apk"
+        
+        # Generate QR code
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_L,
+            box_size=10,
+            border=4,
+        )
+        qr.add_data(apk_url)
+        qr.make(fit=True)
+        
+        # Create QR code image
+        img = qr.make_image(fill_color="black", back_color="white")
+        
+        # Convert to base64
+        buffered = io.BytesIO()
+        img.save(buffered)
+        img_str = base64.b64encode(buffered.getvalue()).decode()
+        
+        return jsonify({
+            'qr_code': f"data:image/png;base64,{img_str}",
+            'apk_url': apk_url
+        })
+        
+    except ImportError:
+        return jsonify({'error': 'Module QR Code non disponible'}), 500
+    except Exception as e:
+        logging.error(f"QR generation error: {str(e)}")
+        return jsonify({'error': f'Erreur lors de la génération: {str(e)}'}), 500
+
+@app.route('/api/info')
+def api_info():
+    """API endpoint for mobile app integration"""
+    return jsonify({
+        'app_name': 'NetSecurePro IA - OCR Intelligent',
+        'version': '1.0',
+        'author': 'Zoubirou Mohammed Ilyes',
+        'orcid': 'https://orcid.org/0009-0007-7571-3178',
+        'features': [
+            'OCR PDF précis (PyMuPDF)',
+            'Export texte OCR', 
+            'Interface Web style terminal futuriste',
+            'Version APK mobile WebView offline',
+            'QR Code de téléchargement intégré'
+        ],
+        'apk_url': 'https://netsecurepro.github.io/NetSecureOCR.apk'
+    })
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
