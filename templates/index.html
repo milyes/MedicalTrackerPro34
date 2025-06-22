@@ -140,9 +140,9 @@
   </div>
 
   <!-- Main Content -->
-  <main class="flex-grow flex flex-col md:flex-row container mx-auto px-4 py-6 gap-6">
+  <main class="flex-grow flex flex-col xl:flex-row container mx-auto px-6 py-8 gap-8 max-w-7xl">
     <!-- Left Side (Upload) -->
-    <section class="w-full md:w-1/2 space-y-6">
+    <section class="w-full xl:w-2/5 space-y-6">
       <div class="bg-[#0a0a23] rounded-2xl p-6 shadow-2xl border border-[#1a2a4a] scan-effect">
         <h2 class="text-xl mb-6 text-center font-semibold terminal-text">
           <i class="fas fa-file-pdf text-purple-400 mr-1"></i>
@@ -204,7 +204,7 @@
     </section>
 
     <!-- Right Side (Terminal) -->
-    <section class="w-full md:w-1/2 space-y-6">
+    <section class="w-full xl:w-3/5 space-y-6">
       <div class="bg-[#0a0a23] rounded-2xl p-6 shadow-2xl border border-[#0ff] glow">
         <div class="flex justify-between items-center mb-4">
           <h2 class="text-xl font-bold text-cyan-400 terminal-text">
@@ -218,10 +218,12 @@
         </div>
         
         <!-- Terminal History -->
-        <div id="terminalHistory" class="terminal-text mb-4 h-40 bg-[#00111e] rounded-lg p-3 border border-[#1a2a4a] text-[#a3b1d1] overflow-y-auto">
-          <div>> NetSecurePro IA v1.0 - Système initialisé</div>
-          <div>> Module OCR PyMuPDF + Tesseract chargé</div>
-          <div>> Auteur: Zoubirou Mohammed Ilyes</div>
+        <div id="terminalHistory" class="terminal-text mb-4 h-56 bg-[#00111e] rounded-lg p-4 border border-[#1a2a4a] text-[#a3b1d1] overflow-y-auto">
+          <div class="text-cyan-400 font-bold">> NetSecurePro IA v1.0 - Système initialisé</div>
+          <div class="text-green-400">> Module OCR PyMuPDF + Tesseract chargé</div>
+          <div class="text-purple-400">> Auteur: Zoubirou Mohammed Ilyes</div>
+          <div class="text-yellow-400">> Interface optimisée pour ordinateur</div>
+          <div class="text-blue-400">> Résolution détectée: Desktop</div>
           <div>> Tapez 'help' pour afficher les commandes disponibles</div>
         </div>
         
@@ -250,62 +252,97 @@
           <h3 class="text-cyan-400 mb-2 terminal-text">
             <i class="fas fa-robot mr-1"></i> Réponse du système
           </h3>
-          <div id="responseBox" class="terminal-text w-full p-3 bg-[#00111e] rounded-lg h-32 border border-cyan-400 text-white overflow-auto">
-            En attente de commande...
+          <div id="responseBox" class="terminal-text w-full p-4 bg-[#00111e] rounded-lg h-40 border border-cyan-400 text-white overflow-auto">
+            <div class="text-cyan-400">En attente de commande...</div>
+            <div class="text-gray-500 text-sm mt-2">Utilisez les raccourcis Ctrl+U (upload) et Ctrl+E (export)</div>
           </div>
         </div>
         
-        <!-- Quick Actions -->
-        <div class="mb-4 grid grid-cols-2 gap-2">
+        <!-- Quick Actions Desktop -->
+        <div class="mb-4 grid grid-cols-2 lg:grid-cols-4 gap-2">
           <button onclick="sendMessage('show results')" 
-                  class="bg-cyan-600 hover:bg-cyan-700 text-white text-xs py-1 px-2 rounded cyber-button">
-            <i class="fas fa-eye mr-1"></i>Affichage Dynamique
+                  class="bg-cyan-600 hover:bg-cyan-700 text-white text-xs py-2 px-3 rounded cyber-button hover-glow">
+            <i class="fas fa-eye mr-1"></i>Vue Dynamique
           </button>
           <button onclick="sendMessage('export')" 
-                  class="bg-green-600 hover:bg-green-700 text-white text-xs py-1 px-2 rounded cyber-button">
-            <i class="fas fa-download mr-1"></i>Export Rapide
+                  class="bg-green-600 hover:bg-green-700 text-white text-xs py-2 px-3 rounded cyber-button hover-glow">
+            <i class="fas fa-download mr-1"></i>Export
+          </button>
+          <button onclick="generateQRCode()" 
+                  class="bg-purple-600 hover:bg-purple-700 text-white text-xs py-2 px-3 rounded cyber-button hover-glow">
+            <i class="fas fa-qrcode mr-1"></i>QR APK
+          </button>
+          <button onclick="openCLIModal()" 
+                  class="bg-orange-600 hover:bg-orange-700 text-white text-xs py-2 px-3 rounded cyber-button hover-glow">
+            <i class="fas fa-terminal mr-1"></i>CLI
           </button>
         </div>
       </div>
       
-      <!-- Command Reference -->
-      <div class="bg-[#0a0a23] rounded-2xl p-6 shadow-2xl border border-[#1a2a4a]">
-        <h3 class="text-lg font-semibold mb-3 terminal-text">
-          <i class="fas fa-list-alt text-purple-400 mr-1"></i>
-          Commandes disponibles
-        </h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-          <div class="bg-[#00111e] p-2 rounded">
-            <code class="terminal-text text-purple-400">help</code>
-            <p class="text-[#a3b1d1]">Afficher l'aide</p>
+      <!-- Command Reference & System Stats -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Commands -->
+        <div class="bg-[#0a0a23] rounded-2xl p-6 shadow-2xl border border-[#1a2a4a]">
+          <h3 class="text-lg font-semibold mb-3 terminal-text">
+            <i class="fas fa-list-alt text-purple-400 mr-1"></i>
+            Commandes disponibles
+          </h3>
+          <div class="grid grid-cols-2 gap-2 text-sm">
+            <div class="bg-[#00111e] p-2 rounded hover:bg-[#1a2a4a] cursor-pointer transition-colors command-card" onclick="sendMessage('help')">
+              <code class="terminal-text text-purple-400">help</code>
+              <p class="text-[#a3b1d1]">Afficher l'aide</p>
+            </div>
+            <div class="bg-[#00111e] p-2 rounded hover:bg-[#1a2a4a] cursor-pointer transition-colors command-card" onclick="sendMessage('status')">
+              <code class="terminal-text text-purple-400">status</code>
+              <p class="text-[#a3b1d1]">État du système</p>
+            </div>
+            <div class="bg-[#00111e] p-2 rounded hover:bg-[#1a2a4a] cursor-pointer transition-colors command-card" onclick="sendMessage('show results')">
+              <code class="terminal-text text-purple-400">show results</code>
+              <p class="text-[#a3b1d1]">Vue dynamique</p>
+            </div>
+            <div class="bg-[#00111e] p-2 rounded hover:bg-[#1a2a4a] cursor-pointer transition-colors command-card" onclick="sendMessage('export')">
+              <code class="terminal-text text-purple-400">export</code>
+              <p class="text-[#a3b1d1]">Exporter fichier</p>
+            </div>
+            <div class="bg-[#00111e] p-2 rounded hover:bg-[#1a2a4a] cursor-pointer transition-colors command-card" onclick="sendMessage('qr')">
+              <code class="terminal-text text-purple-400">qr</code>
+              <p class="text-[#a3b1d1]">QR Code APK</p>
+            </div>
+            <div class="bg-[#00111e] p-2 rounded hover:bg-[#1a2a4a] cursor-pointer transition-colors command-card" onclick="sendMessage('version')">
+              <code class="terminal-text text-purple-400">version</code>
+              <p class="text-[#a3b1d1]">Version système</p>
+            </div>
           </div>
-          <div class="bg-[#00111e] p-2 rounded">
-            <code class="terminal-text text-purple-400">status</code>
-            <p class="text-[#a3b1d1]">État du système</p>
-          </div>
-          <div class="bg-[#00111e] p-2 rounded">
-            <code class="terminal-text text-purple-400">show results</code>
-            <p class="text-[#a3b1d1]">Afficher les résultats</p>
-          </div>
-          <div class="bg-[#00111e] p-2 rounded">
-            <code class="terminal-text text-purple-400">clear</code>
-            <p class="text-[#a3b1d1]">Effacer les résultats</p>
-          </div>
-          <div class="bg-[#00111e] p-2 rounded">
-            <code class="terminal-text text-purple-400">export</code>
-            <p class="text-[#a3b1d1]">Exporter vers fichier</p>
-          </div>
-          <div class="bg-[#00111e] p-2 rounded">
-            <code class="terminal-text text-purple-400">qr</code>
-            <p class="text-[#a3b1d1]">QR Code APK</p>
-          </div>
-          <div class="bg-[#00111e] p-2 rounded">
-            <code class="terminal-text text-purple-400">version</code>
-            <p class="text-[#a3b1d1]">Infos système</p>
-          </div>
-          <div class="bg-[#00111e] p-2 rounded">
-            <code class="terminal-text text-purple-400">download</code>
-            <p class="text-[#a3b1d1]">Télécharger export</p>
+        </div>
+        
+        <!-- System Statistics -->
+        <div class="bg-[#0a0a23] rounded-2xl p-6 shadow-2xl border border-[#1a2a4a]">
+          <h3 class="text-lg font-semibold mb-3 terminal-text">
+            <i class="fas fa-chart-bar text-green-400 mr-1"></i>
+            Statistiques Système
+          </h3>
+          <div class="space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="text-[#a3b1d1]">Format d'affichage:</span>
+              <span class="text-cyan-400 font-semibold">Desktop</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-[#a3b1d1]">Documents traités:</span>
+              <span class="text-green-400 font-semibold" id="docs-count">0</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-[#a3b1d1]">Pages analysées:</span>
+              <span class="text-purple-400 font-semibold" id="pages-count">0</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-[#a3b1d1]">Caractères extraits:</span>
+              <span class="text-yellow-400 font-semibold" id="chars-count">0</span>
+            </div>
+            <div class="mt-4 pt-3 border-t border-[#1a2a4a]">
+              <button onclick="resetStats()" class="w-full bg-red-600 hover:bg-red-700 text-white text-xs py-1 px-2 rounded">
+                <i class="fas fa-refresh mr-1"></i>Réinitialiser Stats
+              </button>
+            </div>
           </div>
         </div>
       </div>
