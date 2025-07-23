@@ -2,115 +2,139 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MedicalTrackerPro34 – IA22_LOGIC</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IA22 Logic – Plateforme IA Éducative</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f4f6f9;
+      font-family: Arial, sans-serif;
+      background: #f4f8fc;
       margin: 0;
       padding: 2rem;
       color: #222;
     }
-    .container {
-      max-width: 800px;
-      margin: auto;
-      background: #fff;
-      padding: 2rem;
-      border-radius: 20px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    header {
+      background: #003366;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      border-radius: 8px;
     }
     h1 {
-      text-align: center;
-      color: #2c3e50;
+      margin: 0;
+      font-size: 1.8rem;
     }
-    textarea {
-      width: 100%;
-      height: 120px;
-      margin-top: 1rem;
+    #chatbox {
+      margin-top: 2rem;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      background: white;
       padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #ccc;
+    }
+    .msg {
+      margin: 0.5rem 0;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+    }
+    .user {
+      background: #cce5ff;
+      text-align: right;
+    }
+    .ai {
+      background: #e2e2e2;
+      text-align: left;
+    }
+    #form {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    #input {
+      flex-grow: 1;
+      padding: 0.5rem;
       font-size: 1rem;
-      border-radius: 10px;
-      border: 1px solid #ccc;
+      border-radius: 4px;
+      border: 1px solid #999;
     }
     button {
-      margin-top: 1rem;
-      padding: 0.75rem 1.5rem;
+      padding: 0.5rem 1rem;
       font-size: 1rem;
-      background-color: #007bff;
-      color: white;
       border: none;
-      border-radius: 10px;
+      border-radius: 4px;
+      background: #003366;
+      color: white;
       cursor: pointer;
     }
-    button:hover {
-      background-color: #0056b3;
-    }
-    .result {
-      margin-top: 2rem;
-      padding: 1rem;
-      background-color: #e9ecef;
-      border-radius: 10px;
-      font-size: 1rem;
-    }
-    .footer {
-      text-align: center;
+    footer {
       margin-top: 3rem;
+      text-align: center;
       font-size: 0.9rem;
-      color: #666;
+      color: #555;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🧠 Analyse IA – IA22_LOGIC</h1>
-    <p>Entrez une phrase, symptôme ou commande médicale à analyser :</p>
 
-    <form id="iaForm">
-      <textarea id="user_input" placeholder="Ex : Le patient a de la fièvre et une toux sèche."></textarea>
-      <button type="submit">Analyser</button>
+  <header>
+    <h1>IA22_LOGIC – Plateforme Coopkit IA Online</h1>
+    <p>Éducation, Médecine, IA Visionnaire & ChatGPT</p>
+  </header>
+
+  <div id="chatbox">
+    <div id="messages"></div>
+    <form id="form">
+      <input type="text" id="input" placeholder="Posez une question..." required />
+      <button type="submit">Envoyer</button>
     </form>
-
-    <div class="result" id="result">
-      <em>Le résultat de l’analyse IA apparaîtra ici.</em>
-    </div>
   </div>
 
-  <div class="footer">
-    <p>Projet : MedicalTrackerPro34 – IA22_LOGIC © Zoubirou Mohammed Ilyes | ORCID : 0009-0007-7571-3178</p>
-  </div>
+  <footer>
+    Propulsé par NetSecurePro IA – Mohammed Ilyes Zoubirou © 2025
+  </footer>
 
   <script>
-    document.getElementById('iaForm').addEventListener('submit', function(e) {
+    const form = document.getElementById('form');
+    const input = document.getElementById('input');
+    const messages = document.getElementById('messages');
+
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const input = document.getElementById('user_input').value.trim();
-      const resultDiv = document.getElementById('result');
+      const text = input.value.trim();
+      if (!text) return;
 
-      if (!input) {
-        resultDiv.innerHTML = "❗ Veuillez entrer une description avant de lancer l'analyse.";
-        return;
+      addMessage(text, 'user');
+      input.value = '';
+
+      addMessage("Réflexion IA en cours...", 'ai');
+
+      try {
+        const res = await fetch("https://api.mlyes.netsecurepro.ai/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ message: text })
+        });
+
+        const data = await res.json();
+        document.querySelectorAll('.ai').pop().remove();
+        addMessage(data.reply || "[Aucune réponse]", 'ai');
+      } catch (err) {
+        document.querySelectorAll('.ai').pop().remove();
+        addMessage("Erreur de connexion au serveur IA.", 'ai');
       }
-
-      resultDiv.innerHTML = "🔍 Analyse en cours...";
-
-      // IA22_LOGIC Simulation Locale
-      let result = "";
-      const text = input.toLowerCase();
-
-      if (text.includes("fièvre") || text.includes("toux")) {
-        result = "🩺 Symptômes de type infectieux détectés. Recommandation : consulter un médecin.";
-      } else if (text.includes("ordonnance")) {
-        result = "📋 Génération automatique d'une ordonnance IA simulée...";
-      } else if (text.includes("analyse sanguine")) {
-        result = "🧪 Analyse sanguine demandée. Lancement du module de diagnostic intelligent...";
-      } else {
-        result = "🤖 Analyse générique IA22_LOGIC : aucun symptôme critique détecté.";
-      }
-
-      setTimeout(() => {
-        resultDiv.innerHTML = `<strong>Résultat IA :</strong><br>${result}`;
-      }, 800);
     });
+
+    function addMessage(text, type) {
+      const msg = document.createElement('div');
+      msg.className = 'msg ' + type;
+      msg.textContent = text;
+      messages.appendChild(msg);
+      messages.scrollTop = messages.scrollHeight;
+    }
   </script>
+
 </body>
 </html>
