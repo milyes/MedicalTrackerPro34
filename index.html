@@ -1,140 +1,64 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>IA22 Logic – Plateforme IA Éducative</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>INTELLIGENCE - Live</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f4f8fc;
-      margin: 0;
-      padding: 2rem;
-      color: #222;
-    }
-    header {
-      background: #003366;
-      color: white;
-      padding: 1rem;
-      text-align: center;
-      border-radius: 8px;
-    }
-    h1 {
-      margin: 0;
-      font-size: 1.8rem;
-    }
-    #chatbox {
-      margin-top: 2rem;
-      max-width: 700px;
-      margin-left: auto;
-      margin-right: auto;
-      background: white;
-      padding: 1rem;
-      border-radius: 8px;
-      box-shadow: 0 0 10px #ccc;
-    }
-    .msg {
-      margin: 0.5rem 0;
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
-    }
-    .user {
-      background: #cce5ff;
-      text-align: right;
-    }
-    .ai {
-      background: #e2e2e2;
-      text-align: left;
-    }
-    #form {
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 1rem;
-    }
-    #input {
-      flex-grow: 1;
-      padding: 0.5rem;
-      font-size: 1rem;
-      border-radius: 4px;
-      border: 1px solid #999;
-    }
-    button {
-      padding: 0.5rem 1rem;
-      font-size: 1rem;
-      border: none;
-      border-radius: 4px;
-      background: #003366;
-      color: white;
-      cursor: pointer;
-    }
-    footer {
-      margin-top: 3rem;
-      text-align: center;
-      font-size: 0.9rem;
-      color: #555;
+      background-color: #000d19;
+      color: #00ffff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
   </style>
 </head>
-<body>
+<body class="flex items-center justify-center min-h-screen px-4">
+  <div class="w-full max-w-md bg-[#0a0a23] rounded-2xl p-6 shadow-2xl border border-[#0ff]">
+    <div class="flex justify-between items-center mb-4">
+      <h1 class="text-2xl font-bold text-cyan-400">INTELLIGENCE</h1>
+      <span class="text-white">milyes</span>
+    </div>
 
-  <header>
-    <h1>IA22_LOGIC – Plateforme Coopkit IA Online</h1>
-    <p>Éducation, Médecine, IA Visionnaire & ChatGPT</p>
-  </header>
+    <h2 class="text-xl mb-6 text-center font-semibold">Welcome!</h2>
 
-  <div id="chatbox">
-    <div id="messages"></div>
-    <form id="form">
-      <input type="text" id="input" placeholder="Posez une question..." required />
-      <button type="submit">Envoyer</button>
-    </form>
-  </div>
+    <div class="mb-4">
+      <input
+        id="questionInput"
+        type="text"
+        placeholder="Ask a question..."
+        class="w-full p-3 rounded-lg bg-[#00111e] text-white border border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+      />
+    </div>
 
-  <footer>
-    Propulsé par NetSecurePro IA – Mohammed Ilyes Zoubirou © 2025
-  </footer>
+    <button
+      onclick="sendMessage()"
+      class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded mb-6"
+    >
+      Send
+    </button>
 
-  <script>
-    const form = document.getElementById('form');
-    const input = document.getElementById('input');
-    const messages = document.getElementById('messages');
+    <div class="mb-4">
+      <h3 class="text-cyan-400 mb-2">Response</h3>
+      <div id="responseBox" class="w-full p-3 bg-[#00111e] rounded-lg h-24 border border-cyan-400 text-white overflow-auto"></div>
+    </div>
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const text = input.value.trim();
-      if (!text) return;
+    <script>
+      async function sendMessage() {
+        const input = document.getElementById("questionInput").value;
+        const responseBox = document.getElementById("responseBox");
 
-      addMessage(text, 'user');
-      input.value = '';
-
-      addMessage("Réflexion IA en cours...", 'ai');
-
-      try {
-        const res = await fetch("https://api.mlyes.netsecurepro.ai/chat", {
+        const res = await fetch("http://localhost:5000/ask", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ message: text })
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question: input }),
         });
 
         const data = await res.json();
-        document.querySelectorAll('.ai').pop().remove();
-        addMessage(data.reply || "[Aucune réponse]", 'ai');
-      } catch (err) {
-        document.querySelectorAll('.ai').pop().remove();
-        addMessage("Erreur de connexion au serveur IA.", 'ai');
+        responseBox.innerText = data.response;
       }
-    });
-
-    function addMessage(text, type) {
-      const msg = document.createElement('div');
-      msg.className = 'msg ' + type;
-      msg.textContent = text;
-      messages.appendChild(msg);
-      messages.scrollTop = messages.scrollHeight;
-    }
-  </script>
-
+    </script>
+  </div>
 </body>
 </html>
